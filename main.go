@@ -41,7 +41,7 @@ func main() {
 	router.Use(cors.Default())
 	api := router.Group("/api/v1")
 
-	api.GET("/abouts", aboutHandler.GetAbout)
+	api.GET("/abouts/:id", aboutHandler.GetAbout)
 
 	router.Run()
 }

@@ -32,6 +32,6 @@ func (h *aboutHandler) GetAbout(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, response)
 		return
 	}
-	response := helper.ApiResponse("Berhasil mendapatkan data", http.StatusOK, "error", aboutDetail)
+	response := helper.ApiResponse("Berhasil mendapatkan data", http.StatusOK, "success", aboutDetail)
 	c.JSON(http.StatusOK, response)
 }
