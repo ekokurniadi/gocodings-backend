@@ -4,8 +4,9 @@ import (
 	"log"
 	"os"
 
+	"web-portfolio-backend/input"
 	"web-portfolio-backend/repository"
-	"web-portfolio-backend/schema"
+	"web-portfolio-backend/service"
 
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
@@ -33,14 +34,13 @@ func main() {
 	}
 
 	aboutRepository := repository.NewAboutRepository(db)
+	aboutService := service.NewAboutService(aboutRepository)
 
-	var input schema.About
-	input.Alamat = "Jambi"
-	input.TentangSaya = "Tentang saya"
-	input.Telp = "0895604730750"
-	input.Whatsapp = "0895604730750"
-	input.Email = "ekokurniadi.02@gmail.com"
-	aboutRepository.Save(input)
+	var input input.InputID
+
+	input.ID = 3
+
+	aboutService.AboutServiceDelete(input)
 
 	router := gin.Default()
 	router.Use(cors.Default())
