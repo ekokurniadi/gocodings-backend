@@ -2,6 +2,7 @@ package handler
 
 import (
 	"net/http"
+	"web-portfolio-backend/formatter"
 	"web-portfolio-backend/helper"
 	"web-portfolio-backend/input"
 	"web-portfolio-backend/service"
@@ -32,6 +33,6 @@ func (h *aboutHandler) GetAbout(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, response)
 		return
 	}
-	response := helper.ApiResponse("Berhasil mendapatkan data", http.StatusOK, "success", aboutDetail)
+	response := helper.ApiResponse("Berhasil mendapatkan data", http.StatusOK, "success", formatter.FormatAbout(aboutDetail))
 	c.JSON(http.StatusOK, response)
 }
