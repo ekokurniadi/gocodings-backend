@@ -4,7 +4,7 @@ import (
 	"log"
 	"os"
 
-	"web-portfolio-backend/input"
+	"web-portfolio-backend/handler"
 	"web-portfolio-backend/repository"
 	"web-portfolio-backend/service"
 
@@ -35,18 +35,13 @@ func main() {
 
 	aboutRepository := repository.NewAboutRepository(db)
 	aboutService := service.NewAboutService(aboutRepository)
-
-	var input input.InputID
-
-	input.ID = 3
-
-	aboutService.AboutServiceDelete(input)
+	aboutHandler := handler.NewAboutHandler(aboutService)
 
 	router := gin.Default()
 	router.Use(cors.Default())
 	api := router.Group("/api/v1")
 
-	api.GET("/abouts")
+	api.GET("/abouts", aboutHandler.GetAbout)
 
 	router.Run()
 }
