@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"net/http"
 	"os"
@@ -10,6 +11,7 @@ import (
 	"web-portfolio-backend/helper"
 	"web-portfolio-backend/middleware"
 	"web-portfolio-backend/repository"
+	"web-portfolio-backend/schema"
 	"web-portfolio-backend/service"
 
 	"github.com/dgrijalva/jwt-go"
@@ -37,6 +39,8 @@ func main() {
 		log.Fatal(err)
 		return
 	}
+	db.AutoMigrate(&schema.About{}, &schema.User{})
+	fmt.Println("Database Connected")
 
 	aboutRepository := repository.NewAboutRepository(db)
 	aboutService := service.NewAboutService(aboutRepository)
