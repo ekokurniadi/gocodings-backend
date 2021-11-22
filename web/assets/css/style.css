@@ -178,7 +178,7 @@ textarea.rounded {
     padding: 15px;
     font-family: 'Poppins';
     font-size: 13px;
-    width: 200px;
+    width: 100%;
 }
 
 .btn-danger:hover {
