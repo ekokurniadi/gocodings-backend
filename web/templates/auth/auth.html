@@ -37,8 +37,23 @@
                                 <label for="" style="font-size: 9pt;">Show Password</label>
                             </div>
                             <div class="sign d-flex justify-content-center mt-3 mb-2">
-                                <button class="btn btn-danger btn-block btn-flat">LOGIN</button>
+                                <div class="sk-circle" id="test">
+                                    <div class="sk-circle1 sk-child"></div>
+                                    <div class="sk-circle2 sk-child"></div>
+                                    <div class="sk-circle3 sk-child"></div>
+                                    <div class="sk-circle4 sk-child"></div>
+                                    <div class="sk-circle5 sk-child"></div>
+                                    <div class="sk-circle6 sk-child"></div>
+                                    <div class="sk-circle7 sk-child"></div>
+                                    <div class="sk-circle8 sk-child"></div>
+                                    <div class="sk-circle9 sk-child"></div>
+                                    <div class="sk-circle10 sk-child"></div>
+                                    <div class="sk-circle11 sk-child"></div>
+                                    <div class="sk-circle12 sk-child"></div>
+                                </div>
+                                <button class="btn btn-danger btn-block btn-flat" id="btn-login" onclick="login()">LOGIN</button>
                             </div>
+
                         </form>
                     </div>
                     <div class="form-circle d-flex justify-content-center align-content-end mb-2">
@@ -69,8 +84,21 @@
         }
     }
 </script>
+<script>
+    window.onload = function() {
+        document.getElementById("test").style.display = 'none';
+    }
+
+    function login() {
+        document.getElementById("test").style.display = 'block';
+        document.getElementById("btn-login").style.display = 'none';
+    }
+</script>
+
 {{if .data}}
 <script>
+    document.getElementById("test").style.display = 'none';
+    document.getElementById("btn-login").style.display = 'block';
     Swal.fire({
         icon: 'success',
         title: 'Notification',
