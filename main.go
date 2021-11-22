@@ -33,7 +33,7 @@ func main() {
 	databaseName := os.Getenv("DB_DATABASE")
 	databasePort := os.Getenv("DB_PORT")
 
-	dsn := "host=" + host + " user=" + userHost + " password=" + userPass + " dbname=" + databaseName + " port=" + databasePort + " sslmode=require TimeZone=Asia/Jakarta"
+	dsn := "host=" + host + " user=" + userHost + " password=" + userPass + " dbname=" + databaseName + " port=" + databasePort + " sslmode=disable TimeZone=Asia/Jakarta"
 	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
 	if err != nil {
 		log.Fatal(err)
@@ -53,12 +53,18 @@ func main() {
 
 	router := gin.Default()
 	router.Use(cors.Default())
+	router.LoadHTMLGlob("web/templates/**/*")
+	router.Static("css", "./web/assets/css")
+	router.Static("images", "./images")
 	api := router.Group("/api/v1")
 
 	api.GET("/abouts/:id", authMiddleware(authService, userService), aboutHandler.GetAbout)
 	api.POST("/users", userHandler.Create)
 	api.POST("/login", userHandler.Login)
 
+	router.GET("/", func(c *gin.Context) {
+		c.HTML(http.StatusOK, "auth.html", nil)
+	})
 	router.Run()
 }
 
