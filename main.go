@@ -13,9 +13,12 @@ import (
 	"web-portfolio-backend/repository"
 	"web-portfolio-backend/schema"
 	"web-portfolio-backend/service"
+	webhandler "web-portfolio-backend/web/handler"
 
 	"github.com/dgrijalva/jwt-go"
 	"github.com/gin-contrib/cors"
+	"github.com/gin-contrib/sessions"
+	"github.com/gin-contrib/sessions/cookie"
 	"github.com/gin-gonic/gin"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
@@ -51,10 +54,17 @@ func main() {
 	authService := middleware.NewService()
 	userHandler := handler.NewUserHandler(userService, authService)
 
+	sessionWebHandler := webhandler.NewSessionHandler(userService)
+	userWebHandler := webhandler.NewUserHandler(userService)
+
 	router := gin.Default()
 	router.Use(cors.Default())
+	cookieStore := cookie.NewStore([]byte(middleware.SECRET_KEY))
+	router.Use(sessions.Sessions("bwastartup", cookieStore))
 	router.LoadHTMLGlob("web/templates/**/*")
 	router.Static("css", "./web/assets/css")
+	router.Static("js", "./web/assets/js")
+	router.Static("webfonts", "./web/assets/webfonts")
 	router.Static("images", "./images")
 	api := router.Group("/api/v1")
 
@@ -62,10 +72,25 @@ func main() {
 	api.POST("/users", userHandler.Create)
 	api.POST("/login", userHandler.Login)
 
-	router.GET("/", func(c *gin.Context) {
-		c.HTML(http.StatusOK, "auth.html", nil)
-	})
+	router.GET("/", sessionWebHandler.New)
+	router.POST("/sessions", sessionWebHandler.LoginAction)
+	router.GET("/dashboard", authAdminMiddleWare(), sessionWebHandler.Dashboard)
+	router.GET("/logout", sessionWebHandler.Logout)
+
+	router.GET("/users", authAdminMiddleWare(), userWebHandler.Index)
 	router.Run()
+}
+
+func authAdminMiddleWare() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		session := sessions.Default(c)
+
+		userIDSession := session.Get("userID")
+		if userIDSession == nil {
+			c.Redirect(http.StatusFound, "/")
+			return
+		}
+	}
 }
 
 func authMiddleware(authService middleware.Service, userService service.UserService) gin.HandlerFunc {

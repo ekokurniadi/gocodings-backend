@@ -57,7 +57,7 @@ func (s *userService) UserServiceCreate(input input.InputUser) (schema.User, err
 		return user, err
 	}
 	user.Password = string(passwordHash)
-	user.Role = "administrator"
+	user.Role = input.Role
 
 	newUser, err := s.repository.Save(user)
 	if err != nil {
