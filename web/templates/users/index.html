@@ -33,3 +33,13 @@
         </table>
     </div>
 </div>
+{{if .data}}
+<script>
+    Swal.fire({
+        icon: 'success',
+        title: 'Notification',
+        text: '{{.data}}',
+
+    })
+</script>
+{{end}}

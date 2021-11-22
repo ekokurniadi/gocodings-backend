@@ -5,9 +5,9 @@ type InputIDUser struct {
 }
 
 type InputUser struct {
-	Name     string `json:"name" binding:"required"`
-	Username string `json:"username" binding:"required"`
-	Password string `json:"password" binding:"required"`
+	Name     string `json:"name" form:"name" binding:"required"`
+	Username string `json:"username" form:"username" binding:"required"`
+	Password string `json:"password" form:"password" binding:"required"`
 	Avatar   string `json:"avatar"`
-	Role     string `json:"role" binding:"required"`
+	Role     string `json:"role" form:"role" binding:"required"`
 }

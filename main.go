@@ -78,6 +78,8 @@ func main() {
 	router.GET("/logout", sessionWebHandler.Logout)
 
 	router.GET("/users", authAdminMiddleWare(), userWebHandler.Index)
+	router.GET("/users/new", authAdminMiddleWare(), userWebHandler.New)
+	router.POST("/users", authAdminMiddleWare(), userWebHandler.Create)
 	router.Run()
 }
 
