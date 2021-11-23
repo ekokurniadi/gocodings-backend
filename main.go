@@ -60,7 +60,7 @@ func main() {
 	router := gin.Default()
 	router.Use(cors.Default())
 	cookieStore := cookie.NewStore([]byte(middleware.SECRET_KEY))
-	router.Use(sessions.Sessions("bwastartup", cookieStore))
+	router.Use(sessions.Sessions(string(middleware.SECRET_KEY), cookieStore))
 	router.LoadHTMLGlob("web/templates/**/*")
 	router.Static("css", "./web/assets/css")
 	router.Static("js", "./web/assets/js")
@@ -68,6 +68,7 @@ func main() {
 	router.Static("images", "./images")
 	api := router.Group("/api/v1")
 
+	api.GET("/abouts", aboutHandler.GetAbouts)
 	api.GET("/abouts/:id", authMiddleware(authService, userService), aboutHandler.GetAbout)
 	api.POST("/users", userHandler.Create)
 	api.POST("/login", userHandler.Login)
