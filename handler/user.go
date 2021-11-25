@@ -2,6 +2,7 @@ package handler
 
 import (
 	"net/http"
+	"strconv"
 	"web-portfolio-backend/formatter"
 	"web-portfolio-backend/helper"
 	"web-portfolio-backend/input"
@@ -92,5 +93,56 @@ func (h *userHandler) Login(c *gin.Context) {
 	formatter := formatter.FormatUserLogin(loggedInUser, token)
 	response := helper.ApiResponse("Login success", http.StatusOK, "success", formatter)
 
+	c.JSON(http.StatusOK, response)
+}
+
+func (h *userHandler) Update(c *gin.Context) {
+	var inputID input.InputIDUser
+
+	err := c.ShouldBindJSON(&inputID)
+	if err != nil {
+		response := helper.ApiResponse("Failed to get User", http.StatusBadRequest, "error", nil)
+		c.JSON(http.StatusBadRequest, response)
+		return
+	}
+
+	var inputData input.InputUser
+	err = c.ShouldBindJSON(&inputData)
+	if err != nil {
+		errors := helper.FormatValidationError(err)
+		errorMessage := gin.H{"errors": errors}
+		response := helper.ApiResponse("Update user failed", http.StatusBadRequest, "error", errorMessage)
+		c.JSON(http.StatusBadRequest, response)
+		return
+	}
+	updatedUser, err := h.service.UserServiceUpdate(inputID, inputData)
+	if err != nil {
+		response := helper.ApiResponse("Update user failed", http.StatusBadRequest, "error", nil)
+		c.JSON(http.StatusBadRequest, response)
+		return
+	}
+	response := helper.ApiResponse("Update user success", http.StatusOK, "success", formatter.FormatUser(updatedUser))
+	c.JSON(http.StatusOK, response)
+}
+
+func (h *userHandler) Delete(c *gin.Context) {
+	param := c.Param("id")
+	id, _ := strconv.Atoi(param)
+	var inputID input.InputIDUser
+	inputID.ID = id
+	_, err := h.service.UserServiceGetByID(id)
+	if err != nil {
+		response := helper.ApiResponse("Failed to get User", http.StatusBadRequest, "error", nil)
+		c.JSON(http.StatusBadRequest, response)
+		return
+	}
+
+	_, err = h.service.UserServiceDelete(inputID)
+	if err != nil {
+		response := helper.ApiResponse("Failed to delete User", http.StatusBadRequest, "error", nil)
+		c.JSON(http.StatusBadRequest, response)
+		return
+	}
+	response := helper.ApiResponse("Delete user success", http.StatusOK, "success", nil)
 	c.JSON(http.StatusOK, response)
 }

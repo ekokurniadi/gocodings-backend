@@ -14,8 +14,8 @@ type UserService interface {
 	UserServiceGetAll() ([]schema.User, error)
 	UserServiceGetByID(ID int) (schema.User, error)
 	UserServiceCreate(input input.InputUser) (schema.User, error)
-	// UserServiceUpdate(inputID input.InputIDUser, inputData input.InputUser) (schema.User, error)
-	// UserServiceDelete(inputID input.InputIDUser) (bool, error)
+	UserServiceUpdate(inputID input.InputIDUser, inputData input.InputUser) (schema.User, error)
+	UserServiceDelete(inputID input.InputIDUser) (bool, error)
 }
 
 type userService struct {
@@ -85,4 +85,31 @@ func (s *userService) UserServiceGetAll() ([]schema.User, error) {
 		return users, err
 	}
 	return users, nil
+}
+
+func (s *userService) UserServiceUpdate(inputID input.InputIDUser, inputData input.InputUser) (schema.User, error) {
+	user, err := s.repository.FindByID(inputID.ID)
+	if err != nil {
+		return user, err
+	}
+
+	user.Name = inputData.Name
+	passwordHash, err := bcrypt.GenerateFromPassword([]byte(inputData.Password), bcrypt.MinCost)
+	if err != nil {
+		return user, err
+	}
+	user.Password = string(passwordHash)
+	updatedUser, err := s.repository.Update(user)
+	if err != nil {
+		return updatedUser, err
+	}
+	return updatedUser, nil
+}
+
+func (s *userService) UserServiceDelete(inputID input.InputIDUser) (bool, error) {
+	_, err := s.repository.DeleteUserByID(inputID.ID)
+	if err != nil {
+		return false, nil
+	}
+	return true, nil
 }

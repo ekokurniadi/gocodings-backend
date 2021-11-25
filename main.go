@@ -11,7 +11,6 @@ import (
 	"web-portfolio-backend/helper"
 	"web-portfolio-backend/middleware"
 	"web-portfolio-backend/repository"
-	"web-portfolio-backend/schema"
 	"web-portfolio-backend/service"
 	webhandler "web-portfolio-backend/web/handler"
 
@@ -25,11 +24,11 @@ import (
 )
 
 func main() {
+	// godotenv not used for deploy on heroku
 	// env := godotenv.Load()
 	// if env != nil {
 	// 	log.Fatal("Error loading .env file")
 	// }
-	// godotenv not used for deploy on heroku
 	host := os.Getenv("DB_HOST")
 	userHost := os.Getenv("DB_USER")
 	userPass := os.Getenv("DB_PASSWORD")
@@ -42,7 +41,7 @@ func main() {
 		log.Fatal(err)
 		return
 	}
-	db.AutoMigrate(&schema.About{}, &schema.User{})
+
 	fmt.Println("Database Connected")
 
 	aboutRepository := repository.NewAboutRepository(db)
