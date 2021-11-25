@@ -18,13 +18,13 @@
             <tbody>
                 {{ range .users }}
                 <tr>
-                    <td><img class="img-fluid img-thumbnail" src="{{if .Avatar }} {{.Avatar}} {{else}} /images/avatars.png {{end}} " width="60"></td>
+                    <td><img class="img-fluid img-thumbnail" src="{{if .Avatar }} /images/{{.Avatar}} {{else}} /images/avatars.png {{end}} " width="60"></td>
                     <td>{{ .Name }}</td>
                     <td>{{ .Username }}</td>
                     <td>{{ .Password }}</td>
                     <td>
-                        <a href="/users/edit/{{ .ID }}"><i class="fa fa-edit"></i></a>
-                        <a href="/users/avatar/{{ .ID }}"><i class="fa fa-trash bg-red" style="color:red"></i></a>
+                        <a href="/users/update/{{ .ID }}"><i class="fa fa-edit"></i></a>
+                        <a href="/users/delete/{{ .ID }}"><i class="fa fa-trash bg-red" style="color:red"></i></a>
                     </td>
 
                 </tr>

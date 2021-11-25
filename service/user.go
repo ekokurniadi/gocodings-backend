@@ -14,7 +14,7 @@ type UserService interface {
 	UserServiceGetAll() ([]schema.User, error)
 	UserServiceGetByID(ID int) (schema.User, error)
 	UserServiceCreate(input input.InputUser) (schema.User, error)
-	UserServiceUpdate(inputID input.InputIDUser, inputData input.InputUser) (schema.User, error)
+	UserServiceUpdate(inputID input.InputIDUser, inputData input.InputUser, fileLocation string) (schema.User, error)
 	UserServiceDelete(inputID input.InputIDUser) (bool, error)
 }
 
@@ -51,7 +51,7 @@ func (s *userService) UserServiceCreate(input input.InputUser) (schema.User, err
 	user := schema.User{}
 	user.Name = input.Name
 	user.Username = input.Username
-	user.Avatar = input.Avatar
+	// user.Avatar = input.Avatar
 	passwordHash, err := bcrypt.GenerateFromPassword([]byte(input.Password), bcrypt.MinCost)
 	if err != nil {
 		return user, err
@@ -87,7 +87,7 @@ func (s *userService) UserServiceGetAll() ([]schema.User, error) {
 	return users, nil
 }
 
-func (s *userService) UserServiceUpdate(inputID input.InputIDUser, inputData input.InputUser) (schema.User, error) {
+func (s *userService) UserServiceUpdate(inputID input.InputIDUser, inputData input.InputUser, fileLocation string) (schema.User, error) {
 	user, err := s.repository.FindByID(inputID.ID)
 	if err != nil {
 		return user, err
@@ -99,6 +99,13 @@ func (s *userService) UserServiceUpdate(inputID input.InputIDUser, inputData inp
 		return user, err
 	}
 	user.Password = string(passwordHash)
+	userAvatar := ""
+	if fileLocation == "" {
+		userAvatar = user.Avatar
+	} else {
+		userAvatar = fileLocation
+	}
+	user.Avatar = userAvatar
 	updatedUser, err := s.repository.Update(user)
 	if err != nil {
 		return updatedUser, err

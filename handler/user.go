@@ -1,8 +1,10 @@
 package handler
 
 import (
+	"fmt"
 	"net/http"
 	"strconv"
+	"time"
 	"web-portfolio-backend/formatter"
 	"web-portfolio-backend/helper"
 	"web-portfolio-backend/input"
@@ -20,6 +22,20 @@ type userHandler struct {
 func NewUserHandler(service service.UserService, authService middleware.Service) *userHandler {
 	return &userHandler{service, authService}
 }
+
+func (h *userHandler) GetUsers(c *gin.Context) {
+	users, err := h.service.UserServiceGetAll()
+	if err != nil {
+		response := helper.ApiResponse("Error to get Users", http.StatusBadRequest, "error", nil)
+		c.JSON(http.StatusBadRequest, response)
+		return
+	}
+
+	response := helper.ApiResponse("List of campaigns", http.StatusOK, "success", formatter.FormatUsers(users))
+	c.JSON(http.StatusOK, response)
+
+}
+
 func (h *userHandler) Create(c *gin.Context) {
 	var input input.InputUser
 	err := c.ShouldBindJSON(&input)
@@ -99,7 +115,7 @@ func (h *userHandler) Login(c *gin.Context) {
 func (h *userHandler) Update(c *gin.Context) {
 	var inputID input.InputIDUser
 
-	err := c.ShouldBindJSON(&inputID)
+	err := c.ShouldBindUri(&inputID)
 	if err != nil {
 		response := helper.ApiResponse("Failed to get User", http.StatusBadRequest, "error", nil)
 		c.JSON(http.StatusBadRequest, response)
@@ -107,15 +123,33 @@ func (h *userHandler) Update(c *gin.Context) {
 	}
 
 	var inputData input.InputUser
-	err = c.ShouldBindJSON(&inputData)
+	file, err := c.FormFile("avatar")
+	inputData.Name = c.PostForm("name")
+	inputData.Password = c.PostForm("password")
+	inputData.Role = c.PostForm("role")
+
 	if err != nil {
-		errors := helper.FormatValidationError(err)
-		errorMessage := gin.H{"errors": errors}
-		response := helper.ApiResponse("Update user failed", http.StatusBadRequest, "error", errorMessage)
+		data := gin.H{
+			"is_uploaded": false,
+		}
+		response := helper.ApiResponse("Failed to upload campaign image", http.StatusBadRequest, "error", data)
 		c.JSON(http.StatusBadRequest, response)
 		return
 	}
-	updatedUser, err := h.service.UserServiceUpdate(inputID, inputData)
+
+	path := fmt.Sprintf("images/%d%s", time.Now().Unix(), file.Filename)
+	fmt.Println(path)
+	err = c.SaveUploadedFile(file, path)
+	if err != nil {
+		data := gin.H{
+			"is_uploaded": false,
+		}
+		response := helper.ApiResponse("Failed to upload campaign image", http.StatusBadRequest, "error", data)
+		c.JSON(http.StatusBadRequest, response)
+		return
+	}
+
+	updatedUser, err := h.service.UserServiceUpdate(inputID, inputData, path)
 	if err != nil {
 		response := helper.ApiResponse("Update user failed", http.StatusBadRequest, "error", nil)
 		c.JSON(http.StatusBadRequest, response)

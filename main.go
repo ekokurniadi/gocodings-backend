@@ -59,7 +59,7 @@ func main() {
 	router := gin.Default()
 	router.Use(cors.Default())
 	cookieStore := cookie.NewStore([]byte(middleware.SECRET_KEY))
-	router.Use(sessions.Sessions(string(middleware.SECRET_KEY), cookieStore))
+	router.Use(sessions.Sessions("bwastartup", cookieStore))
 	router.LoadHTMLGlob("web/templates/**/*")
 	router.Static("css", "./web/assets/css")
 	router.Static("js", "./web/assets/js")
@@ -69,7 +69,11 @@ func main() {
 
 	api.GET("/abouts", aboutHandler.GetAbouts)
 	api.GET("/abouts/:id", authMiddleware(authService, userService), aboutHandler.GetAbout)
+
+	api.GET("/users", userHandler.GetUsers)
 	api.POST("/users", userHandler.Create)
+	api.PUT("/users/:id", userHandler.Update)
+	api.DELETE("/users/:id", userHandler.Delete)
 	api.POST("/login", userHandler.Login)
 
 	router.GET("/", sessionWebHandler.New)
@@ -79,7 +83,9 @@ func main() {
 
 	router.GET("/users", authAdminMiddleWare(), userWebHandler.Index)
 	router.GET("/users/new", authAdminMiddleWare(), userWebHandler.New)
+	router.GET("/users/update/:id", authAdminMiddleWare(), userWebHandler.Update)
 	router.POST("/users", authAdminMiddleWare(), userWebHandler.Create)
+	router.POST("/users/update_action/:id", authAdminMiddleWare(), userWebHandler.UpdateAction)
 	router.Run()
 }
 
