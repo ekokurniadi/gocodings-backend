@@ -11,6 +11,7 @@ import (
 	"web-portfolio-backend/helper"
 	"web-portfolio-backend/middleware"
 	"web-portfolio-backend/repository"
+	"web-portfolio-backend/schema"
 	"web-portfolio-backend/service"
 	webhandler "web-portfolio-backend/web/handler"
 
@@ -41,7 +42,7 @@ func main() {
 		log.Fatal(err)
 		return
 	}
-
+	db.AutoMigrate(&schema.Portofolio{})
 	fmt.Println("Database Connected")
 
 	aboutRepository := repository.NewAboutRepository(db)
@@ -71,19 +72,20 @@ func main() {
 	api.GET("/abouts/:id", authMiddleware(authService, userService), aboutHandler.GetAbout)
 
 	api.GET("/users", userHandler.GetUsers)
-	api.POST("/users", userHandler.Create)
 	api.PUT("/users/:id", userHandler.Update)
 	api.DELETE("/users/:id", userHandler.Delete)
+	api.POST("/users", userHandler.Create)
 	api.POST("/login", userHandler.Login)
 
 	router.GET("/", sessionWebHandler.New)
-	router.POST("/sessions", sessionWebHandler.LoginAction)
 	router.GET("/dashboard", authAdminMiddleWare(), sessionWebHandler.Dashboard)
 	router.GET("/logout", sessionWebHandler.Logout)
+	router.POST("/sessions", sessionWebHandler.LoginAction)
 
 	router.GET("/users", authAdminMiddleWare(), userWebHandler.Index)
 	router.GET("/users/new", authAdminMiddleWare(), userWebHandler.New)
 	router.GET("/users/update/:id", authAdminMiddleWare(), userWebHandler.Update)
+	router.GET("/users/delete/:id", authAdminMiddleWare(), userWebHandler.Delete)
 	router.POST("/users", authAdminMiddleWare(), userWebHandler.Create)
 	router.POST("/users/update_action/:id", authAdminMiddleWare(), userWebHandler.UpdateAction)
 	router.Run()

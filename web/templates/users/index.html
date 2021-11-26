@@ -24,7 +24,7 @@
                     <td>{{ .Password }}</td>
                     <td>
                         <a href="/users/update/{{ .ID }}"><i class="fa fa-edit"></i></a>
-                        <a href="/users/delete/{{ .ID }}"><i class="fa fa-trash bg-red" style="color:red"></i></a>
+                        <a href="/users/delete/{{ .ID }}" onclick="return confirm('Are you sure ?')"><i class="fa fa-trash bg-red" style="color:red"></i></a>
                     </td>
 
                 </tr>
@@ -39,7 +39,6 @@
         icon: 'success',
         title: 'Notification',
         text: '{{.data}}',
-
     })
 </script>
 {{end}}

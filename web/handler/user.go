@@ -27,8 +27,11 @@ func (h *userHandler) Index(c *gin.Context) {
 	}
 	session := sessions.Default(c)
 	data := session.Get("userName")
+	flash := session.Get("message")
+	session.Set("message", "")
+	session.Save()
 	c.HTML(http.StatusOK, "header", gin.H{"nama": data, "title": "List Of Users"})
-	c.HTML(http.StatusOK, "index.html", gin.H{"users": users})
+	c.HTML(http.StatusOK, "index.html", gin.H{"users": users, "data": flash})
 	c.HTML(http.StatusOK, "footer", nil)
 }
 
@@ -133,4 +136,34 @@ func (h *userHandler) UpdateAction(c *gin.Context) {
 	session.Set("message", "Update User Success")
 	session.Save()
 	c.Redirect(http.StatusFound, "/users")
+}
+
+func (h *userHandler) Delete(c *gin.Context) {
+	param := c.Param("id")
+	id, _ := strconv.Atoi(param)
+
+	var inputID input.InputIDUser
+	inputID.ID = id
+	_, err := h.userService.UserServiceGetByID(id)
+	if err != nil {
+		session := sessions.Default(c)
+		session.Set("message", "User not Found")
+		session.Save()
+		c.Redirect(http.StatusFound, "/users")
+		return
+	}
+	_, err = h.userService.UserServiceDelete(inputID)
+
+	if err != nil {
+		session := sessions.Default(c)
+		session.Set("message", "User not Found")
+		session.Save()
+		c.Redirect(http.StatusFound, "/users")
+		return
+	}
+	session := sessions.Default(c)
+	session.Set("message", "Delete User Success")
+	session.Save()
+	c.Redirect(http.StatusFound, "/users")
+
 }
