@@ -98,7 +98,16 @@ func (s *userService) UserServiceUpdate(inputID input.InputIDUser, inputData inp
 	if err != nil {
 		return user, err
 	}
-	user.Password = string(passwordHash)
+	err = bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(inputData.Password))
+	password := ""
+	if err != nil {
+		password = string(passwordHash)
+	} else {
+		password = user.Password
+	}
+
+	user.Password = password
+
 	userAvatar := ""
 	if fileLocation == "" {
 		userAvatar = user.Avatar

@@ -33,7 +33,7 @@ func (r *aboutRepository) FindByID(ID int) (schema.About, error) {
 
 func (r *aboutRepository) FindAll() ([]schema.About, error) {
 	var abouts []schema.About
-	err := r.db.Find(&abouts).Error
+	err := r.db.Order("id asc").Find(&abouts).Error
 	if err != nil {
 		return abouts, err
 	}

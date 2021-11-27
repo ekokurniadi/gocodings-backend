@@ -54,8 +54,13 @@ func main() {
 	authService := middleware.NewService()
 	userHandler := handler.NewUserHandler(userService, authService)
 
+	portfolioRepository := repository.NewPortofolioRepository(db)
+	portfolioService := service.NewPortfolioService(portfolioRepository)
+
 	sessionWebHandler := webhandler.NewSessionHandler(userService)
 	userWebHandler := webhandler.NewUserHandler(userService)
+	aboutWebHandler := webhandler.NewAboutHandler(aboutService)
+	portfolioWebHandler := webhandler.NewPortfolioHandler(portfolioService)
 
 	router := gin.Default()
 	router.Use(cors.Default())
@@ -88,6 +93,12 @@ func main() {
 	router.GET("/users/delete/:id", authAdminMiddleWare(), userWebHandler.Delete)
 	router.POST("/users", authAdminMiddleWare(), userWebHandler.Create)
 	router.POST("/users/update_action/:id", authAdminMiddleWare(), userWebHandler.UpdateAction)
+
+	router.GET("/abouts", authAdminMiddleWare(), aboutWebHandler.Index)
+
+	router.GET("/portfolios", authAdminMiddleWare(), portfolioWebHandler.Index)
+	router.GET("/portfolios/new", authAdminMiddleWare(), portfolioWebHandler.New)
+	router.POST("/portfolios", authAdminMiddleWare(), portfolioWebHandler.Create)
 	router.Run()
 }
 

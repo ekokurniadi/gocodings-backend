@@ -116,9 +116,9 @@ func (h *userHandler) UpdateAction(c *gin.Context) {
 		path := fmt.Sprintf("images/%s", file.Filename)
 		err = c.SaveUploadedFile(file, path)
 		if err != nil {
-			c.HTML(http.StatusInternalServerError, "header", gin.H{"nama": data, "title": "Update User"})
-			c.HTML(http.StatusInternalServerError, "user_edit.html", inputData)
-			c.HTML(http.StatusInternalServerError, "footer", nil)
+			c.HTML(http.StatusOK, "header", gin.H{"nama": data, "title": "Update User"})
+			c.HTML(http.StatusOK, "user_edit.html", inputData)
+			c.HTML(http.StatusOK, "footer", nil)
 			return
 		}
 		images = file.Filename

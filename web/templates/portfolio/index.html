@@ -1,0 +1,44 @@
+{{define "list_portfolios"}}
+<h2 class="mb-4">
+    List of Portfolios</h2>
+
+<a href="/portfolios/new" class="btn btn-primary mb-3"><i class="fa fa-plus"></i> New About</a>
+
+<div class="card mb-4">
+    <div class="card-body">
+        <table class="table mb-0">
+            <thead class="thead-light">
+                <tr>
+                    <th>Cover</th>
+                    <th>Phil</th>
+                    <th>Title</th>
+                    <th>Description</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {{range .portfolios}}
+                <tr>
+                    <td><img class="img-fluid img-thumbnail" src="{{if .ImageCover }} /images/{{.ImageCover}} {{else}} /images/avatars.png {{end}} " width="90"></td>
+                    <td>{{.Phil}}</td>
+                    <td>{{.Title}}</td>
+                    <td>{{.Description}}</td>
+                    <td>
+                        <a href="/portfolios/update/{{ .ID }}"><i class="fa fa-edit"></i></a>
+                        <a href="/portfolios/delete/{{ .ID }}" onclick="return confirm('Are you sure ?')"><i class="fa fa-trash bg-red" style="color:red"></i></a>
+                    </td>
+                </tr>
+                {{end}}
+            </tbody>
+        </table>
+    </div>
+</div>
+{{if .data}}
+<script>
+    Swal.fire({
+        icon: 'success',
+        title: 'Notification',
+        text: '{{.data}}',
+    })
+</script>
+{{end}} {{end}}

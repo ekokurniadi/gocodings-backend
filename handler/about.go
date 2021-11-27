@@ -40,12 +40,12 @@ func (h *aboutHandler) GetAbout(c *gin.Context) {
 func (h *aboutHandler) GetAbouts(c *gin.Context) {
 	abouts, err := h.service.AboutServiceGetAll()
 	if err != nil {
-		response := helper.ApiResponse("Error to get campaigns", http.StatusBadRequest, "error", nil)
+		response := helper.ApiResponse("Error to get abouts", http.StatusBadRequest, "error", nil)
 		c.JSON(http.StatusBadRequest, response)
 		return
 	}
 
-	response := helper.ApiResponse("List of campaigns", http.StatusOK, "success", formatter.FormatAbouts(abouts))
+	response := helper.ApiResponse("List of abouts", http.StatusOK, "success", formatter.FormatAbouts(abouts))
 	c.JSON(http.StatusOK, response)
 
 }
