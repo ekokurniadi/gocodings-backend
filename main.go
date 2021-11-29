@@ -56,6 +56,7 @@ func main() {
 
 	portfolioRepository := repository.NewPortofolioRepository(db)
 	portfolioService := service.NewPortfolioService(portfolioRepository)
+	portfolioHandler := handler.NewPortofolioHandler(portfolioService)
 
 	sessionWebHandler := webhandler.NewSessionHandler(userService)
 	userWebHandler := webhandler.NewUserHandler(userService)
@@ -72,7 +73,6 @@ func main() {
 	router.Static("webfonts", "./web/assets/webfonts")
 	router.Static("images", "./images")
 	api := router.Group("/api/v1")
-
 	api.GET("/abouts", aboutHandler.GetAbouts)
 	api.GET("/abouts/:id", authMiddleware(authService, userService), aboutHandler.GetAbout)
 
@@ -81,6 +81,8 @@ func main() {
 	api.DELETE("/users/:id", userHandler.Delete)
 	api.POST("/users", userHandler.Create)
 	api.POST("/login", userHandler.Login)
+
+	api.GET("/portofolios", portfolioHandler.GetPortofolios)
 
 	router.GET("/", sessionWebHandler.New)
 	router.GET("/dashboard", authAdminMiddleWare(), sessionWebHandler.Dashboard)

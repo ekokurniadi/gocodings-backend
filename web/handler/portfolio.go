@@ -19,6 +19,7 @@ func NewPortfolioHandler(portfolioService service.PortfolioService) *portfolioHa
 }
 
 func (h *portfolioHandler) Index(c *gin.Context) {
+
 	portfolios, err := h.portfolioService.PortofolioServiceGetAll()
 	if err != nil {
 		c.HTML(http.StatusInternalServerError, "error.html", nil)

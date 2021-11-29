@@ -33,7 +33,7 @@ func (r *portofolioRepository) FindByID(ID int) (schema.Portofolio, error) {
 
 func (r *portofolioRepository) FindAll() ([]schema.Portofolio, error) {
 	var portofolios []schema.Portofolio
-	err := r.db.Find(&portofolios).Error
+	err := r.db.Order("id ASC").Find(&portofolios).Error
 	if err != nil {
 		return portofolios, err
 	}

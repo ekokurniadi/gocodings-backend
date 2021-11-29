@@ -127,7 +127,7 @@ func (h *userHandler) Update(c *gin.Context) {
 	inputData.Name = c.PostForm("name")
 	inputData.Password = c.PostForm("password")
 	inputData.Role = c.PostForm("role")
-
+	
 	if err != nil {
 		data := gin.H{
 			"is_uploaded": false,
